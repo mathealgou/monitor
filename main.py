@@ -1,24 +1,22 @@
 import time
-from system_metrics import get_cpu_usage, get_memory_usage, get_gpu_usage, setup_get_gpu_usage_async, stop_get_gpu_usage
+from system_metrics import (get_cpu_usage, get_memory_usage,
+                            get_gpu_usage, setup_get_gpu_usage_async, stop_get_gpu_usage)
 from screen import draw
 import asyncio
 import signal
-import threading
 
+# Things needed to deal with threads and signals
 stop_flag = False
 
 
-# Signal handler for SIGINT
 def signal_handler(sig, frame):
     global stop_flag
     stop_flag = True
+    print("Stopping...")
 
 
-# Register the signal handler
+# Register the signal handler used to capture the stop command (Ctrl+C) in the terminal
 signal.signal(signal.SIGINT, signal_handler)
-
-global stop_event
-stop_event = threading.Event()
 
 
 async def main():

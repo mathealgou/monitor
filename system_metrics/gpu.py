@@ -38,9 +38,12 @@ async def setup_get_gpu_usage_async():
 
 
 GPU_USAGE_POLL_INTERVAL = 0.01  # Seconds
+
 # Multiplied by GPU_USAGE_POLL_INTERVAL to get the total time window
 GPU_USAGE_LIST_MAX_LENGTH = 100
 
+
+# used to stop the thread
 stop_event = threading.Event()
 
 
@@ -51,9 +54,8 @@ def _get_gpu_usage_async():
         gpu_usage_list.append(_get_gpu_usage())
         time.sleep(GPU_USAGE_POLL_INTERVAL)
 
+
 # make synchronous function to get average gpu usage from the list
-
-
 def get_gpu_usage():
     return sum(gpu_usage_list) / len(gpu_usage_list) if len(gpu_usage_list) > 0 else 0
 
