@@ -37,7 +37,7 @@ async def setup_get_gpu_usage_async():
     threading.Thread(target=_get_gpu_usage_async).start()
 
 
-GPU_USAGE_POLL_INTERVAL = 0.01  # Seconds
+GPU_USAGE_POLL_INTERVAL = 0.1  # Seconds
 
 # Multiplied by GPU_USAGE_POLL_INTERVAL to get the total time window
 GPU_USAGE_LIST_MAX_LENGTH = 100

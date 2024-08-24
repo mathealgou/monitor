@@ -2,7 +2,7 @@ import tkinter as tk
 import signal
 from .utils import get_geometry
 from .custom_widgets import Clock
-from .consts import BG_COLOR, TEXT_COLOR, FONT
+from .consts import BG_COLOR, TEXT_COLOR, FONT, FONT_SMALL, ACCENT_COLOR
 import numpy as np
 
 cpu_text = None
@@ -44,9 +44,12 @@ def setup_screen():
     gpu_label = Label(root, textvariable=gpu_text,
                       bg=BG_COLOR, fg=TEXT_COLOR)
     gpu_label.pack()
-
-    audio_bars = tk.Canvas(root, bg=BG_COLOR, highlightthickness=0)
-    audio_bars.pack()
+    audio_bars = tk.Canvas(
+        root,
+        bg=BG_COLOR,  width=400, height=200,
+        highlightbackground="white",  # Set the border color to white
+        highlightthickness=2, bd=20)
+    audio_bars.pack(pady=100)
 
     # make the window appear on top of all other windows
     root.attributes("-topmost", True)
@@ -88,12 +91,27 @@ def draw(data: Data, root: tk.Tk):
     audio_bars.delete("all")
     if data.audio_levels is None:
         return
-    for i, level in enumerate(data.audio_levels):
-        x0 = 10
-        y0 = 10 + i * 20
-        x1 = 10 + level * 200
-        y1 = 20 + i * 20
-        audio_bars.create_rectangle(x0, y0, x1, y1, fill=TEXT_COLOR)
 
+    for i, level in enumerate(data.audio_levels):
+        top_pad = 40
+        multiplier = 100
+        height = 20
+        middle = audio_bars.winfo_width() / 2
+        x0 = (middle - level * multiplier)
+        y0 = (10 + i * height) + top_pad
+        x1 = (middle + level * multiplier)
+        y1 = (height + i * height) + top_pad
+
+        outline = None if level < 0.5 else ACCENT_COLOR
+
+        audio_bars.create_rectangle(
+            x0, y0, x1, y1, fill=TEXT_COLOR, outline=outline)
+
+    average = np.mean(data.audio_levels)
+    audio_db = 20 * np.log10(average)
+
+    audio_bars_text_color = ACCENT_COLOR if audio_db > 0 else TEXT_COLOR
+    audio_bars.create_text(
+        20, 20, text=f"{audio_db:.2f} dB", fill=audio_bars_text_color, font=FONT_SMALL, anchor="nw", justify="left")
     root.update()
     root.update_idletasks()
