@@ -1,5 +1,7 @@
 import tkinter as tk
+from tkinter import filedialog
 import time
+import math
 from .consts import BG_COLOR, TEXT_COLOR,  FONT_SMALL, FONT_VERY_SMALL
 
 
@@ -50,8 +52,24 @@ class Menu(tk.Frame):
         except:
             pass
 
+    def change_background(self):
+        print("Change background")
+        dialog = filedialog.askopenfilename(
+            initialdir="/", title="Select file", filetypes=(("png files", "*.png"), ("all files", "*.*")))
+        if dialog:
+            # get the sibling widgets
+            siblings = self.master.winfo_children()
+            background = None
+            for sibling in siblings:
+                if isinstance(sibling, BackgroundImage):
+                    background = sibling
+                    break
+            if background:
+                background.set_image(tk.PhotoImage(file=dialog))
+
     def create_menu_items(self):
         menu_items = [
+            ("Change Background", self.change_background),
             ("Quit", self.quit),
         ]
 
@@ -59,3 +77,31 @@ class Menu(tk.Frame):
             button = tk.Button(
                 self.menu_frame, text=text, command=command, bg=BG_COLOR, fg=TEXT_COLOR, font=FONT_VERY_SMALL, )
             button.pack(pady=5, anchor="w")
+
+
+class BackgroundImage(tk.Label):
+    def __init__(self, master, **kw):
+        super().__init__(master, **kw)
+        self.image = kw.get("image")
+        if self.image:
+            self.set_image(self.image)
+        self.config(bg=BG_COLOR)
+
+        self.place(x=0, y=0, relwidth=1, relheight=1)
+        self.lower()
+
+    def set_image(self, image):
+        # set the image to be the same size as the window
+        window_width = self.master.winfo_width()
+        window_height = self.master.winfo_height()
+        image_width = image.width()
+        image_height = image.height()
+        self.image = image
+        if image_width < window_width:
+            self.image = self.image.zoom(
+                math.ceil(window_width / image_width), math.ceil(window_height / image_height))
+        if image_height < window_height:
+            self.image = self.image.zoom(
+                math.ceil(window_width / image_width), math.ceil(window_height / image_height))
+
+        self.config(image=self.image)
