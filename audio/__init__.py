@@ -1,23 +1,31 @@
 import soundcard as sc
 import numpy as np
+import matplotlib.pyplot as plt
 SAMPLE_RATE = 44100
 TIME_WINDOW = 0.01   # seconds
 
 
-def split_audio_into_frequency_bands(data):
+def split_audio_into_frequency_bands(data: np.array) -> np.array:
     """
         get the audio levels for different frequency bands
     """
-    # split the audio data into 8 frequency bands
-    # 0-100Hz, 100-200Hz, 200-400Hz, 400-800Hz, 800-1600Hz, 1600-3200Hz, 3200-6400Hz, 6400-12800
-    # the last band will contain the rest of the audio data
-    frequency_bands = np.array_split(data, 8)
-    # calculate the audio levels for each frequency band
-    audio_levels = [np.mean(np.abs(f)) for f in frequency_bands]
-
-    # normalize the audio levels
-    audio_levels = np.array(audio_levels) / np.max(audio_levels)
-    return audio_levels
+    multiplier = 1
+    # data is of shape (n, 2) where n is the number of samples and 2 is the number of channels
+    # we will take the mean of the two channels
+    data = np.mean(data, axis=1)
+    data = np.abs(data) * multiplier
+    # get the fft of the data
+    fft = np.fft.rfft(data)
+    # get the frequencies
+    freqs = np.fft.rfftfreq(len(data), d=1/SAMPLE_RATE)
+    # get the power of the fft
+    power = np.abs(fft)
+    # get the power in different frequency bands
+    split_audio_levels = []
+    for i in range(0, 1000, 100):
+        split_audio_levels.append(
+            np.mean(power[(freqs >= i) & (freqs < i + 100)]))
+    return np.array(split_audio_levels)
 
 
 def get_audio_levels():

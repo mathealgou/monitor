@@ -56,6 +56,7 @@ def setup_screen():
     root.protocol("WM_DELETE_WINDOW",
                   lambda: signal.raise_signal(signal.SIGINT))
 
+    root.update()
     return root
 
 
@@ -63,7 +64,7 @@ def setup_screen():
 
 
 class Data():
-    def __init__(self, cpu_usage: float, memory_usage: float, gpu_usage: float, audio_levels: np.array = None):
+    def __init__(self, cpu_usage: float = None, memory_usage: float = None, gpu_usage: float = None, audio_levels: np.array = None):
         self.cpu_usage = cpu_usage
         self.memory_usage = memory_usage
         self.gpu_usage = gpu_usage
@@ -74,11 +75,19 @@ def draw(data: Data, root: tk.Tk):
     """
         Draw the system metrics on the screen
     """
+    if data.cpu_usage is None:
+        data.cpu_usage = 0
+    if data.memory_usage is None:
+        data.memory_usage = 0
+    if data.gpu_usage is None:
+        data.gpu_usage = 0
     cpu_text.set(f"CPU: {data.cpu_usage:.2f}%")
     memory_text.set(f"Memory: {data.memory_usage:.2f}%")
     gpu_text.set(f"GPU: {data.gpu_usage:.2f}%")
 
     audio_bars.delete("all")
+    if data.audio_levels is None:
+        return
     for i, level in enumerate(data.audio_levels):
         x0 = 10
         y0 = 10 + i * 20
