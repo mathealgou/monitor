@@ -5,6 +5,7 @@ from screen import draw, Data, setup_screen
 import asyncio
 import signal
 import tkinter as tk
+from audio import get_audio_levels
 
 # Things needed to deal with threads and signals
 stop_flag = False
@@ -25,9 +26,12 @@ async def main():
     root = setup_screen()
     try:
         while not stop_flag:
-            data = Data(get_cpu_usage(), get_memory_usage(), get_gpu_usage())
+            data = Data(get_cpu_usage(),
+                        get_memory_usage(),
+                        get_gpu_usage(),
+                        get_audio_levels()
+                        )
             draw(data, root)
-            time.sleep(.1)
     finally:
         stop_get_gpu_usage()
 
