@@ -49,6 +49,9 @@ class Menu(tk.Frame):
 
     def quit(self):
         try:
+            self.master.update()
+            self.master.update_idletasks()
+            self.master.quit()
             self.master.destroy()
         except:
             pass
@@ -99,7 +102,7 @@ class BackgroundImage(tk.Label):
         self.place(x=0, y=0, relwidth=1, relheight=1)
         self.lower()
 
-    def set_image(self, image):
+    def set_image(self, image: tk.PhotoImage):
         # set the image to be the same size as the window
         window_width = self.master.winfo_width()
         window_height = self.master.winfo_height()
@@ -113,5 +116,11 @@ class BackgroundImage(tk.Label):
             self.image = self.image.zoom(
                 math.ceil(window_width / image_width), math.ceil(window_height / image_height))
 
+        print("🐍 File: screen/custom_widgets.py | Line: 120 | set_image ~ self.image", self.image)
         self.config(image=self.image)
-        save_config("background_image", self.image.cget("file"))
+
+        # print the file path to the console
+        print("name\n\n", self.image.name)
+        print("🐍 File: screen/custom_widgets.py | Line: 125 | set_image ~ image.cget",
+              image.cget("file"))
+        save_config("background_image", image.cget("file"))

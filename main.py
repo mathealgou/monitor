@@ -34,6 +34,8 @@ async def main():
                 audio_levels=get_audio_levels(),
             )
             draw(data, root)
+    except Exception as e:
+        print(e)
     finally:
         stop_get_cpu_usage()
         stop_get_gpu_usage()
