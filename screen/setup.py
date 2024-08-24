@@ -32,7 +32,7 @@ def setup_screen():
     root.resizable(False, False)
 
     backgroun_image = BackgroundImage(
-        root, image=tk.PhotoImage(file="assets/image.png"))
+        root)
 
     menu = Menu(root)
     root.config(menu=menu)

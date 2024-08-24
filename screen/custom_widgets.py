@@ -3,6 +3,7 @@ from tkinter import filedialog
 import time
 import math
 from .consts import BG_COLOR, TEXT_COLOR,  FONT_SMALL, FONT_VERY_SMALL
+from configs import load_config, save_config, DEFAULT_CONFIG
 
 
 class Clock(tk.Label):
@@ -82,7 +83,15 @@ class Menu(tk.Frame):
 class BackgroundImage(tk.Label):
     def __init__(self, master, **kw):
         super().__init__(master, **kw)
-        self.image = kw.get("image")
+        image = kw.get("image")
+        if not image:
+            config = load_config()
+            image = config.get("background_image")
+            if image:
+                image = tk.PhotoImage(file=image)
+            else:
+                image = None
+        self.image = image
         if self.image:
             self.set_image(self.image)
         self.config(bg=BG_COLOR)
@@ -105,3 +114,4 @@ class BackgroundImage(tk.Label):
                 math.ceil(window_width / image_width), math.ceil(window_height / image_height))
 
         self.config(image=self.image)
+        save_config("background_image", self.image.cget("file"))
