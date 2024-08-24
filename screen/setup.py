@@ -30,6 +30,10 @@ def setup_screen():
     # make full screen
     root.config(bg=BG_COLOR)
     root.resizable(False, False)
+
+    clock = Clock(root)
+    clock.pack(anchor="ne")
+
     global cpu_text, memory_text, gpu_text, audio_bars
     cpu_text = tk.StringVar()
     memory_text = tk.StringVar()
