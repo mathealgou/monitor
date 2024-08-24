@@ -1,7 +1,7 @@
 import tkinter as tk
 import signal
 from .utils import get_geometry
-from .custom_widgets import Clock
+from .custom_widgets import Clock, Menu
 from .consts import BG_COLOR, TEXT_COLOR, FONT, FONT_SMALL, ACCENT_COLOR
 import numpy as np
 
@@ -30,6 +30,9 @@ def setup_screen():
     # make full screen
     root.config(bg=BG_COLOR)
     root.resizable(False, False)
+
+    menu = Menu(root)
+    root.config(menu=menu)
 
     clock = Clock(root)
     clock.pack(anchor="ne")

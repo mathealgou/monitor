@@ -7,3 +7,5 @@ ACCENT_COLOR = "#0bf"
 FONT = ("Arial", 40)
 
 FONT_SMALL = ("Arial", 20)
+
+FONT_VERY_SMALL = ("Arial", 10)
